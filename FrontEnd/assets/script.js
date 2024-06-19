@@ -357,9 +357,7 @@ async function addProject() {
     const fileInput = document.getElementById("fileInput");
     const selectElement = document.getElementById("category");
     const titleElement = document.getElementById("title");
-    console.log(fileInput.files)
-    console.log(selectElement.value)
-    console.log(titleElement.value)
+
 
     if (fileInput.files && fileInput.files.length > 0 && selectElement.value != "" && titleElement.value != "") {
         const formData= new FormData()
