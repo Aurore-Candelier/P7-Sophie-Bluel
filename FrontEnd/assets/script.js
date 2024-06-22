@@ -18,7 +18,6 @@ async function fillWorks(works) {
     } else {
         worksFiltered = works;
     }
-    console.log(worksFiltered)
 
     // Récupère la class gallery
     const gallery = document.querySelector(".gallery");
@@ -31,7 +30,7 @@ async function fillWorks(works) {
         // Ajout des attributs src et alt à l'image
         img.setAttribute("src", worksFiltered[i].imageUrl);
         img.setAttribute("alt", worksFiltered[i].title);
-        // Création de la balise figcation et ajout du texte
+        // Création de la balise figcaption et ajout du texte
         const figcaption = document.createElement("figcaption");
         figcaption.textContent = worksFiltered[i].title;
         // rattachement des enfants à leurs parents
@@ -60,33 +59,32 @@ async function fillCategories(categories) {
         categoriesFiltered = categories;
     }
     
-    // // Récupère l'ID filters
+    // Récupère l'ID filters
     const filters = document.getElementById("filters");
     // Crée le bouton "Tous"
     const allButton = document.createElement("button");
     allButton.type = "button";
-    allButton.textContent = "Tous";
+    allButton.textContent = "Tous"; 
+    // Déclenche la fonction fillworks au clic
     allButton.addEventListener('click', function() {
         fillWorks()
-        console.log('Bouton Tous cliqué !');
     });
     
     filters.appendChild(allButton);
 
-    // Boucle pour chaque élément dans la catégorie
+    // Boucle sur chaque élément dans la catégorie filtrée
     for (let i = 0; i < categoriesFiltered.length; i++) {
         // Creation des boutons
         const buttonsFilter = document.createElement("button");
         buttonsFilter.type = "button";
         buttonsFilter.textContent = categoriesFiltered[i].name;
+        // Déclenche le filtre des oeuvres en fonction du bouton cliqué et de sa catégorie
         buttonsFilter.addEventListener('click', async function() {
             const allWorks = await fetchWorks()
             const filterWorks = allWorks.filter(function(element){
                 return element.categoryId == categoriesFiltered[i].id
             })
             fillWorks(filterWorks)
-
-            console.log('Bouton', categoriesFiltered[i].name, 'cliqué !');
         });
         filters.appendChild(buttonsFilter);
     }
@@ -100,10 +98,12 @@ function isConnected() {
     return localStorage.getItem("token") !== null;
 }
 
-// Fonction qui met à jour le lien d'authentification en fonction de l'état de connexion de l'utilisateur
+// Fonction qui mets à jour le lien d'authentification en fonction de l'état de connexion de l'utilisateur
 function updateAuthLink() {
     const authLink = document.getElementById("auth-link");
 
+    // Cas 1 : utilisateur connecté
+    // le bouton devient "logout" et au clic déconnecte l'utilisateur
     if (isConnected()) {
         authLink.innerText = "logout";
         authLink.href = "#";
@@ -111,23 +111,26 @@ function updateAuthLink() {
             event.preventDefault();
             logout();
         });
+    // Cas 2 :  utilisateur déconnecté
+    // le bouton devient "login" et au clic redirige vers la page de connexion
     } else {
         authLink.innerText = "login";
         authLink.href = "./connexion.html";
     }
 }
 
-// Fonction pour déconnecter l'utlisateur en supprimant le token du localStorage et en le redirigeant vers la page d'accueil
+// Fonction pour déconnecter l'utlisateur
 function logout() {
+    //Supressoin du token depuis le localStorage
     localStorage.removeItem("token");
+    // Redirection vers la page d'accueil
     window.location.href = "index.html";
 }
 
-// Affiche ou masque les éléments en fonction de l'état de connexion
+// Affiche ou masque les éléments de la vue administrateur en fonction de l'état de connexion
 function handleAdminElements() {
     const checkIfConnected = isConnected(); 
     let adminBoxes = document.querySelectorAll(".admin-element");
-    console.log(adminBoxes);
 
     if (checkIfConnected) {
         for (const element of adminBoxes) {
@@ -145,7 +148,7 @@ function handleAdminElements() {
     }
 }
 
-
+// Met en mémoire l'ensemble de ces fonctions une fois le chargement du contenu du DOM terminé
 document.addEventListener('DOMContentLoaded', function() {
     handleAdminElements();
     updateAuthLink();
@@ -164,7 +167,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // Ouvre la modale principale
 function openMainModal() {
     const linkModify= document.querySelector(".modify")
-    console.log(linkModify)
     linkModify.addEventListener("click", function() {
         const modal= document.querySelector(".modal");
         modal.classList.remove("hidden");
@@ -174,6 +176,7 @@ function openMainModal() {
 // Ferme la modale lorsque le bouton fermeture est cliqué
 function closeModal(e) {
     const target= e.target
+    // Récupère le plus proche parent qui a la class "modal"
     const parent= target.closest(".modal");
     if (parent) {
         parent.classList.add("hidden");
@@ -278,7 +281,6 @@ function backToMainModal() {
         const secondModal = document.getElementById("secondModal");
         const mainModal = document.getElementById("mainModal");
         secondModal.classList.add("hidden");
-        console.log(mainModal);
         mainModal.classList.remove("hidden");
 
         //Supprime le fichier initialement sélectionné
@@ -323,7 +325,6 @@ function uploadBtnListener() {
 function fileBtnListener() {
     const fileInput = document.getElementById("fileInput");
     fileInput.addEventListener("change", function() {
-        console.log(fileInput.files)
 
         if (fileInput.files && fileInput.files.length > 0 ) {
             const file = fileInput.files[0];
